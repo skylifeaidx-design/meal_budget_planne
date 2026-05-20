@@ -1348,3 +1348,38 @@ body::before {
     border-color: var(--level-great);
     box-shadow: 0 0 22px rgba(59, 130, 246, 0.6), inset 0 0 12px rgba(59, 130, 246, 0.3);
 }
+
+/* Container to stack avatar and name tag vertically */
+.health-character-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+/* Name tag styling (Premium Greenish Badge) */
+.health-character-name {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--primary-light);
+    background: rgba(5, 194, 40, 0.12);
+    border: 1px solid rgba(5, 194, 40, 0.25);
+    padding: 2.5px 8px;
+    border-radius: var(--radius-full);
+    text-shadow: 0 0 6px rgba(5, 194, 40, 0.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+    letter-spacing: -0.2px;
+    animation: floatingName 3.2s ease-in-out infinite;
+}
+
+/* Make name tag sway together with avatar gently */
+@keyframes floatingName {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-2px);
+    }
+}
