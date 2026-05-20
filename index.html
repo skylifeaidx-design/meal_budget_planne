@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="팀 잔여 예산을 기반으로 일일 식비와 추천 식당을 캘린더에서 확인하세요. 슬기로운 식비생활!">
+    <title>슬기로운 식비생활 🍽️ | 팀 식비 플래너</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ====== Header ====== -->
+    <header class="header" id="header">
+        <div class="header-content">
+            <div class="logo-area">
+                <span class="logo-emoji">🍽️</span>
+                <div>
+                    <h1>슬기로운 식비생활 <span class="title-feat">feat. DX지원팀</span></h1>
+                    <p class="subtitle">우리 팀 예산으로 얼마나 맛있게 먹을 수 있을까?</p>
+                </div>
+            </div>
+            <button class="settings-toggle" id="settingsToggle" aria-label="설정 열기">
+                <span class="settings-icon">⚙️</span>
+                <span class="settings-label">설정</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- ====== Dashboard Cards ====== -->
+        <section class="dashboard" id="dashboard" aria-label="예산 대시보드">
+            <!-- Budget Input Card -->
+            <div class="card card-budget" id="cardBudget">
+                <div class="card-header">
+                    <span class="card-icon">💰</span>
+                    <label class="card-label" for="budgetInput">잔여 예산</label>
+                </div>
+                <div class="input-group">
+                    <span class="currency-symbol">₩</span>
+                    <input type="text" id="budgetInput" class="budget-input" placeholder="예산을 입력하세요" inputmode="numeric" autocomplete="off">
+                </div>
+                <div class="scope-selector" id="scopeSelector" role="radiogroup" aria-label="예산 범위">
+                    <button class="scope-btn active" data-scope="monthly" role="radio" aria-checked="true">월</button>
+                    <button class="scope-btn" data-scope="quarterly" role="radio" aria-checked="false">분기</button>
+                    <button class="scope-btn" data-scope="annual" role="radio" aria-checked="false">연간</button>
+                </div>
+            </div>
+
+            <!-- Daily Budget Card -->
+            <div class="card card-stat" id="cardDaily">
+                <span class="card-icon">👤</span>
+                <div class="stat-info">
+                    <span class="card-label">1인 일평균 식비</span>
+                    <span class="stat-value" id="dailyBudgetValue">₩ —</span>
+                </div>
+            </div>
+
+            <!-- Remaining Days Card -->
+            <div class="card card-stat" id="cardDays">
+                <span class="card-icon">📅</span>
+                <div class="stat-info">
+                    <span class="card-label">남은 영업일</span>
+                    <span class="stat-value" id="remainingDaysValue">— 일</span>
+                </div>
+            </div>
+
+            <!-- Budget Health Card -->
+            <div class="card card-stat card-health" id="cardHealth">
+                <span class="card-icon" id="healthEmoji">🔋</span>
+                <div class="stat-info">
+                    <span class="card-label">예산 건강도</span>
+                    <div class="health-bar-container">
+                        <div class="health-bar">
+                            <div class="health-fill" id="healthFill"></div>
+                        </div>
+                        <span class="health-label" id="healthLabel">입력 대기</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== Daily Message ====== -->
+        <section class="message-banner" id="messageBanner" aria-label="오늘의 한마디">
+            <span class="message-icon">💬</span>
+            <p class="message-text" id="messageText">예산을 입력하면 오늘의 한마디를 알려드릴게요!</p>
+        </section>
+
+        <!-- ====== Calendar Section ====== -->
+        <section class="calendar-section" id="calendarSection" aria-label="식비 캘린더">
+            <div class="calendar-header">
+                <button class="nav-btn" id="prevMonth" aria-label="이전 달">
+                    <span>◀</span>
+                </button>
+                <h2 class="month-title" id="monthTitle">2026년 5월</h2>
+                <button class="nav-btn" id="nextMonth" aria-label="다음 달">
+                    <span>▶</span>
+                </button>
+            </div>
+            <div class="calendar-weekdays" aria-hidden="true">
+                <span>월</span>
+                <span>화</span>
+                <span>수</span>
+                <span>목</span>
+                <span>금</span>
+                <span class="weekend">토</span>
+                <span class="weekend">일</span>
+            </div>
+            <div class="calendar-grid" id="calendarGrid" role="grid">
+                <!-- Calendar cells generated by JavaScript -->
+            </div>
+            <!-- Calendar Summary Footer -->
+            <div class="calendar-summary" id="calendarSummary">
+                <div class="summary-item">
+                    <span class="summary-label">이번 달 총 영업일</span>
+                    <span class="summary-value" id="summaryBusinessDays">—</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">이번 달 예상 식비 합계</span>
+                    <span class="summary-value" id="summaryTotalCost">—</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">수정된 날짜</span>
+                    <span class="summary-value" id="summaryEditedDays">0일</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== Legend ====== -->
+        <section class="legend-section" aria-label="범례">
+            <h3 class="legend-title">🏪 식당 추천 기준</h3>
+            <div class="legend-grid" id="legendGrid">
+                <div class="legend-item legend-critical">
+                    <span class="legend-color"></span>
+                    <span class="legend-range">~8,000원</span>
+                    <span class="legend-name">🏢 JTBC구내식당</span>
+                </div>
+                <div class="legend-item legend-tight">
+                    <span class="legend-color"></span>
+                    <span class="legend-range">8,000~9,000원</span>
+                    <span class="legend-name">🍜 모모분식</span>
+                </div>
+                <div class="legend-item legend-moderate">
+                    <span class="legend-color"></span>
+                    <span class="legend-range">9,000~10,000원</span>
+                    <span class="legend-name">🍲 김밥앤라면</span>
+                </div>
+                <div class="legend-item legend-good">
+                    <span class="legend-color"></span>
+                    <span class="legend-range">10,000~12,000원</span>
+                    <span class="legend-name">🏪 회사 반경 50M내 식당</span>
+                </div>
+                <div class="legend-item legend-great">
+                    <span class="legend-color"></span>
+                    <span class="legend-range">12,000원~</span>
+                    <span class="legend-name">🎉 먹고싶은거 왠만한건 괜찮음</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ====== Settings Panel ====== -->
+    <div class="settings-overlay" id="settingsOverlay"></div>
+    <aside class="settings-panel" id="settingsPanel" aria-label="설정 패널">
+        <div class="settings-header">
+            <h3>⚙️ 설정</h3>
+            <button class="close-btn" id="settingsClose" aria-label="설정 닫기">✕</button>
+        </div>
+
+        <div class="settings-body">
+            <div class="settings-group">
+                <label for="baseDateInput">📆 기준일</label>
+                <input type="date" id="baseDateInput" class="settings-input">
+                <p class="settings-hint">이 날짜부터 식비를 계산합니다</p>
+            </div>
+
+            <div class="settings-group">
+                <label>👥 팀 인원수</label>
+                <div class="stepper">
+                    <button class="stepper-btn" id="teamMinus" aria-label="인원 감소">−</button>
+                    <span class="stepper-value" id="teamSizeDisplay">9명</span>
+                    <button class="stepper-btn" id="teamPlus" aria-label="인원 증가">+</button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <label>🚫 추가 제외일</label>
+                <p class="settings-hint">연차, 워크숍 등 식비가 필요 없는 날</p>
+                <div class="exclude-input-row">
+                    <input type="date" id="excludeDateInput" class="settings-input">
+                    <button class="add-btn" id="addExcludeDate">추가</button>
+                </div>
+                <ul class="excluded-list" id="excludedList">
+                    <!-- Generated by JS -->
+                </ul>
+            </div>
+
+            <div class="settings-group">
+                <label>🎌 2026 공휴일</label>
+                <p class="settings-hint">자동 제외됩니다 (클릭하면 제외/포함 토글)</p>
+                <ul class="holiday-list" id="holidayList">
+                    <!-- Generated by JS -->
+                </ul>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ====== Warning Popup (hover tooltip) ====== -->
+    <div class="warning-popup" id="warningPopup" role="tooltip" aria-hidden="true">
+        <div class="warning-content">
+            <img src="assets/warning_character.png" alt="단호한 거절 캐릭터" class="warning-image">
+            <p class="warning-text">사이드 메뉴는 노노!<br>조금만 참으세요! 😤</p>
+        </div>
+    </div>
+
+    <!-- ====== Edit Modal ====== -->
+    <div class="modal-overlay" id="editModalOverlay" aria-hidden="true">
+        <div class="edit-modal" id="editModal" role="dialog" aria-labelledby="editModalTitle">
+            <h3 id="editModalTitle">✏️ 식비 수정</h3>
+            <p class="edit-date-info" id="editModalDate"></p>
+            <p class="edit-current-info" id="editModalCurrent"></p>
+            <div class="edit-input-group">
+                <span class="currency-symbol">₩</span>
+                <input type="text" id="editAmountInput" class="edit-input" placeholder="1인 식비 금액" inputmode="numeric" autocomplete="off">
+            </div>
+            <p class="edit-hint">수정하면 나머지 영업일의 평균 식비가 재계산됩니다</p>
+            <div class="edit-actions">
+                <button class="btn btn-cancel" id="editCancel">취소</button>
+                <button class="btn btn-reset" id="editReset">초기화</button>
+                <button class="btn btn-save" id="editSave">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== Footer ====== -->
+    <footer class="footer">
+        <p>Made with 💚 by 디자인실장 영자 · 마포구 매봉산로 75 근처 맛집 데이터 기반</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
