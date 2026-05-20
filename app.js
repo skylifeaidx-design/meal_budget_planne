@@ -437,15 +437,52 @@ function renderDashboard(result) {
 
     let healthText = '입력 대기';
     let healthEmoji = '🔋';
+    let characterImg = 'https://raw.githubusercontent.com/wonseokjung/solopreneur-ai-agents/main/agents/youngja/assets/youngja_coffee.png';
+    let statusClass = 'default';
+
     if (result.avgPerPerson > 0) {
-        if (result.avgPerPerson < 8000) { healthText = '위험'; healthEmoji = '🔴'; }
-        else if (result.avgPerPerson < 9000) { healthText = '빠듯'; healthEmoji = '🟠'; }
-        else if (result.avgPerPerson < 10000) { healthText = '보통'; healthEmoji = '🟡'; }
-        else if (result.avgPerPerson < 12000) { healthText = '양호'; healthEmoji = '🟢'; }
-        else { healthText = '넉넉'; healthEmoji = '💚'; }
+        if (result.avgPerPerson < 8000) { 
+            healthText = '위험'; 
+            healthEmoji = '🔴'; 
+            characterImg = 'https://raw.githubusercontent.com/wonseokjung/solopreneur-ai-agents/main/agents/youngja/assets/youngja_panic.png';
+            statusClass = 'critical';
+        }
+        else if (result.avgPerPerson < 9000) { 
+            healthText = '빠듯'; 
+            healthEmoji = '🟠'; 
+            characterImg = 'https://raw.githubusercontent.com/wonseokjung/solopreneur-ai-agents/main/agents/youngja/assets/youngja_thinking.png';
+            statusClass = 'tight';
+        }
+        else if (result.avgPerPerson < 10000) { 
+            healthText = '보통'; 
+            healthEmoji = '🟡'; 
+            characterImg = 'https://raw.githubusercontent.com/wonseokjung/solopreneur-ai-agents/main/agents/youngja/assets/youngja_hello.png';
+            statusClass = 'moderate';
+        }
+        else if (result.avgPerPerson < 12000) { 
+            healthText = '양호'; 
+            healthEmoji = '🟢'; 
+            characterImg = 'https://raw.githubusercontent.com/wonseokjung/solopreneur-ai-agents/main/agents/youngja/assets/youngja_thumbsup.png';
+            statusClass = 'good';
+        }
+        else { 
+            healthText = '넉넉'; 
+            healthEmoji = '💚'; 
+            characterImg = 'https://raw.githubusercontent.com/wonseokjung/solopreneur-ai-agents/main/agents/youngja/assets/youngja_excited.png';
+            statusClass = 'great';
+        }
     }
     $('healthLabel').textContent = healthText;
-    $('healthEmoji').textContent = healthEmoji;
+    
+    // Character Avatar Image & Class update
+    const charImgEl = $('healthCharacterImg');
+    const charWrapperEl = $('healthCharacterWrapper');
+    if (charImgEl && charWrapperEl) {
+        if (charImgEl.src !== characterImg) {
+            charImgEl.src = characterImg;
+        }
+        charWrapperEl.className = 'health-character-wrapper ' + statusClass;
+    }
 
     // Scope buttons
     document.querySelectorAll('.scope-btn').forEach(btn => {

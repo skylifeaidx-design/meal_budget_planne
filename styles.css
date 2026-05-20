@@ -175,20 +175,23 @@ body::before {
 }
 
 .header h1 {
-    font-size: 1.6rem;
+    font-size: 1.55rem;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--primary-light);
     letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    text-shadow: 0 0 15px rgba(5, 194, 40, 0.2);
 }
 
 .title-feat {
-    font-size: 0.65em;
+    font-size: 0.72em;
     font-weight: 600;
-    opacity: 0.7;
-    letter-spacing: 0;
+    color: var(--text-secondary);
+    opacity: 0.85;
+    letter-spacing: -0.2px;
 }
 
 .subtitle {
@@ -285,6 +288,14 @@ body::before {
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
+}
+
+.card-budget .card-label {
+    font-size: 1.05rem;
+    color: #ffffff;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(5, 194, 40, 0.45);
+    letter-spacing: 0.8px;
 }
 
 .input-group {
@@ -1267,4 +1278,73 @@ body::before {
     }
 
     .settings-label { display: none; }
+}
+
+/* ---- Health Character Avatar Styling ---- */
+.health-character-wrapper {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: all var(--transition-slow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Image cropping Magic: zoom and center top for face focus */
+.health-character-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 10%;
+    transform: scale(1.32);
+    transition: transform var(--transition-normal);
+    /* Floating and swaying animation */
+    animation: floatingCharacter 3.2s ease-in-out infinite;
+}
+
+/* Gentle breathing & rotation animation for premium feel */
+@keyframes floatingCharacter {
+    0%, 100% {
+        transform: scale(1.32) translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: scale(1.32) translateY(-4.5px) rotate(1.2deg);
+    }
+}
+
+/* Neon Glow Border color sync based on budget health level */
+.health-character-wrapper.default {
+    border-color: var(--glass-border);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.05), inset 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.health-character-wrapper.critical {
+    border-color: var(--level-critical);
+    box-shadow: 0 0 20px rgba(239, 68, 110, 0.5), inset 0 0 10px rgba(239, 68, 110, 0.25);
+}
+
+.health-character-wrapper.tight {
+    border-color: var(--level-tight);
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.5), inset 0 0 10px rgba(249, 115, 22, 0.25);
+}
+
+.health-character-wrapper.moderate {
+    border-color: var(--level-moderate);
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.5), inset 0 0 10px rgba(234, 179, 8, 0.25);
+}
+
+.health-character-wrapper.good {
+    border-color: var(--level-good);
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.55), inset 0 0 10px rgba(34, 197, 94, 0.25);
+}
+
+.health-character-wrapper.great {
+    border-color: var(--level-great);
+    box-shadow: 0 0 22px rgba(59, 130, 246, 0.6), inset 0 0 12px rgba(59, 130, 246, 0.3);
 }
