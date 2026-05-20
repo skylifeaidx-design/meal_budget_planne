@@ -437,38 +437,38 @@ function renderDashboard(result) {
 
     let healthText = '입력 대기';
     let healthEmoji = '🔋';
-    let characterImg = 'https://raw.githubusercontent.com/wonseokjung/solopreneur-ai-agents/main/agents/youngja/assets/youngja_coffee.png';
+    let characterImg = 'assets/winter_neutral.png';
     let statusClass = 'default';
 
     if (result.avgPerPerson > 0) {
         if (result.avgPerPerson < 8000) { 
             healthText = '위험'; 
             healthEmoji = '🔴'; 
-            characterImg = 'https://raw.githubusercontent.com/wonseokjung/solopreneur-ai-agents/main/agents/youngja/assets/youngja_panic.png';
+            characterImg = 'assets/winter_panic.png';
             statusClass = 'critical';
         }
         else if (result.avgPerPerson < 9000) { 
             healthText = '빠듯'; 
             healthEmoji = '🟠'; 
-            characterImg = 'https://raw.githubusercontent.com/wonseokjung/solopreneur-ai-agents/main/agents/youngja/assets/youngja_thinking.png';
+            characterImg = 'assets/winter_thinking.png';
             statusClass = 'tight';
         }
         else if (result.avgPerPerson < 10000) { 
             healthText = '보통'; 
             healthEmoji = '🟡'; 
-            characterImg = 'https://raw.githubusercontent.com/wonseokjung/solopreneur-ai-agents/main/agents/youngja/assets/youngja_hello.png';
+            characterImg = 'assets/winter_neutral.png';
             statusClass = 'moderate';
         }
         else if (result.avgPerPerson < 12000) { 
             healthText = '양호'; 
             healthEmoji = '🟢'; 
-            characterImg = 'https://raw.githubusercontent.com/wonseokjung/solopreneur-ai-agents/main/agents/youngja/assets/youngja_thumbsup.png';
+            characterImg = 'assets/winter_good.png';
             statusClass = 'good';
         }
         else { 
             healthText = '넉넉'; 
             healthEmoji = '💚'; 
-            characterImg = 'https://raw.githubusercontent.com/wonseokjung/solopreneur-ai-agents/main/agents/youngja/assets/youngja_excited.png';
+            characterImg = 'assets/winter_excited.png';
             statusClass = 'great';
         }
     }

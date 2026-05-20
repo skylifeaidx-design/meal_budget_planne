@@ -1282,8 +1282,8 @@ body::before {
 
 /* ---- Health Character Avatar Styling ---- */
 .health-character-wrapper {
-    width: 70px;
-    height: 70px;
+    width: 110px;
+    height: 110px;
     border-radius: 50%;
     overflow: hidden;
     border: 3px solid rgba(255, 255, 255, 0.1);
@@ -1301,8 +1301,8 @@ body::before {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 10%;
-    transform: scale(1.32);
+    object-position: center 15%;
+    transform: scale(1.25);
     transition: transform var(--transition-normal);
     /* Floating and swaying animation */
     animation: floatingCharacter 3.2s ease-in-out infinite;
@@ -1311,10 +1311,10 @@ body::before {
 /* Gentle breathing & rotation animation for premium feel */
 @keyframes floatingCharacter {
     0%, 100% {
-        transform: scale(1.32) translateY(0) rotate(0deg);
+        transform: scale(1.25) translateY(0) rotate(0deg);
     }
     50% {
-        transform: scale(1.32) translateY(-4.5px) rotate(1.2deg);
+        transform: scale(1.25) translateY(-4.5px) rotate(1.2deg);
     }
 }
 
