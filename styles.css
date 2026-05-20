@@ -243,7 +243,7 @@ body::before {
 /* ---- Dashboard ---- */
 .dashboard {
     display: grid;
-    grid-template-columns: 1.3fr 1fr 1fr 1fr;
+    grid-template-columns: 1.15fr 1.3fr 1fr 1fr;
     gap: var(--space-md);
     margin-bottom: var(--space-lg);
 }
@@ -428,10 +428,12 @@ body::before {
     align-items: center;
     gap: var(--space-md);
     padding: var(--space-md) var(--space-lg);
-    background: linear-gradient(135deg, rgba(5, 194, 40, 0.08), rgba(59, 130, 246, 0.06));
-    border: 1px solid rgba(5, 194, 40, 0.15);
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(10, 10, 26, 0.4));
+    border: 1px solid rgba(5, 194, 40, 0.25);
+    border-left: 4px solid var(--primary);
     border-radius: var(--radius-md);
     margin-bottom: var(--space-lg);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45), inset 0 0 10px rgba(5, 194, 40, 0.03);
     animation: messageFadeIn 0.6s ease;
 }
 
@@ -447,8 +449,10 @@ body::before {
 
 .message-text {
     font-size: 1rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
+    font-weight: 600;
     line-height: 1.5;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* ---- Calendar Section ---- */
@@ -1282,11 +1286,11 @@ body::before {
 
 /* ---- Health Character Avatar Styling ---- */
 .health-character-wrapper {
-    width: 110px;
-    height: 110px;
+    width: 125px;
+    height: 125px;
     border-radius: 16px;
     overflow: hidden;
-    border: 3px solid rgba(255, 255, 255, 0.1);
+    border: 3px solid rgba(255, 255, 255, 0.12);
     background: rgba(0, 0, 0, 0.35);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     transition: all var(--transition-slow);
@@ -1301,8 +1305,8 @@ body::before {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 15%;
-    transform: scale(1.25);
+    object-position: center;
+    transform: scale(1);
     transition: transform var(--transition-normal);
     /* Floating and swaying animation */
     animation: floatingCharacter 3.2s ease-in-out infinite;
@@ -1311,10 +1315,10 @@ body::before {
 /* Gentle breathing & rotation animation for premium feel */
 @keyframes floatingCharacter {
     0%, 100% {
-        transform: scale(1.25) translateY(0) rotate(0deg);
+        transform: scale(1) translateY(0) rotate(0deg);
     }
     50% {
-        transform: scale(1.25) translateY(-4.5px) rotate(1.2deg);
+        transform: scale(1) translateY(-4px) rotate(1deg);
     }
 }
 
@@ -1516,14 +1520,14 @@ body::before {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 15%;
-    transform: scale(1.2);
+    object-position: center;
+    transform: scale(1);
     animation: recommendFloat 2.5s ease-in-out infinite;
 }
 
 @keyframes recommendFloat {
-    0%, 100% { transform: scale(1.2) translateY(0); }
-    50% { transform: scale(1.2) translateY(-3px); }
+    0%, 100% { transform: scale(1) translateY(0); }
+    50% { transform: scale(1) translateY(-3px); }
 }
 
 .recommend-char-name {
