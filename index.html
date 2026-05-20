@@ -237,6 +237,56 @@
         </div>
     </div>
 
+    <!-- ====== Restaurant Recommendation Modal ====== -->
+    <div class="recommend-overlay" id="recommendOverlay" aria-hidden="true">
+        <div class="recommend-modal" id="recommendModal" role="dialog" aria-labelledby="recommendTitle">
+            <button class="recommend-close" id="recommendCloseX" aria-label="닫기">✕</button>
+
+            <!-- Header: Date & Weather -->
+            <div class="recommend-header">
+                <span class="recommend-date" id="recommendDate">📅 5/20 (화)</span>
+                <span class="recommend-weather" id="recommendWeather">☀️ 맑음 24°C</span>
+            </div>
+
+            <!-- Character + Speech Bubble -->
+            <div class="recommend-character-area">
+                <div class="recommend-character">
+                    <div class="recommend-char-avatar">
+                        <img src="assets/winter_good.png" id="recommendCharImg" alt="김동은 비서">
+                    </div>
+                    <span class="recommend-char-name">김동은<br>개인비서</span>
+                </div>
+                <div class="recommend-speech-bubble" id="recommendBubble">
+                    <p class="recommend-speech-text" id="recommendSpeechText"></p>
+                </div>
+            </div>
+
+            <!-- Main Recommendation Card -->
+            <div class="recommend-card-main" id="recommendCardMain">
+                <div class="recommend-card-badge">TODAY'S PICK ✨</div>
+                <div class="recommend-card-emoji" id="recommendEmoji">🏢</div>
+                <h4 class="recommend-card-name" id="recommendName">JTBC구내식당</h4>
+                <div class="recommend-card-meta">
+                    <span class="recommend-budget" id="recommendBudget">💰 ~8,000원</span>
+                    <span class="recommend-distance" id="recommendDistance">🚶 도보 1분</span>
+                </div>
+                <p class="recommend-card-reason" id="recommendReason"></p>
+            </div>
+
+            <!-- Alternative Restaurants -->
+            <div class="recommend-alternatives">
+                <p class="recommend-alt-title">🔄 이런 곳도 있어요!</p>
+                <div class="recommend-alt-list" id="recommendAltList"></div>
+            </div>
+
+            <!-- Actions -->
+            <div class="recommend-actions">
+                <button class="btn btn-edit-budget" id="recommendEditBtn">✏️ 식비 수정</button>
+                <button class="btn btn-close-recommend" id="recommendCloseBtn">확인</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ====== Footer ====== -->
     <footer class="footer">
         <p>Made with 💚 by 디자인실장 Tuna · 마포구 매봉산로 75 근처 맛집 데이터 기반</p>

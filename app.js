@@ -95,6 +95,46 @@ const SCOPE_LABELS = {
     annual: '연간',
 };
 
+/** Restaurant distance data (simulated walking times from office) */
+const RESTAURANT_DISTANCES = {
+    'JTBC구내식당': '도보 1분',
+    'CJ ENM구내식당': '도보 3분',
+    '상암사옥 구내식당': '도보 2분',
+    'MBC구내식당': '도보 5분',
+    '모모분식': '도보 4분',
+    '상암김밥천국': '도보 6분',
+    '오봉도시락 DMC점': '도보 5분',
+    '신김밥 상암점': '도보 7분',
+    '김밥앤라면': '도보 3분',
+    '역전우동 상암점': '도보 5분',
+    '한솥 DMC점': '도보 4분',
+    '감탄떡볶이 상암점': '도보 6분',
+    '회사 반경 50M내 식당': '도보 3분',
+    '한촌설렁탕 상암점': '도보 7분',
+    '칼국수와족발 DMC점': '도보 6분',
+    '스노우폭스 상암점': '도보 5분',
+    '먹고싶은거 왠만한건 괜찮음': '도보 5~10분',
+    '새마을식당 DMC점': '도보 8분',
+    '본죽&비빔밥 상암점': '도보 6분',
+    '육쌈냉면 상암점': '도보 7분',
+};
+
+/** Simulate weather based on date string (deterministic pseudo-random) */
+function getSimulatedWeather(dateStr) {
+    const parts = dateStr.split('-').map(Number);
+    const seed = parts[0] * 366 + parts[1] * 31 + parts[2];
+    const weathers = [
+        { icon: '☀️', label: '맑음', temp: 25, tip: '산책하기 좋은 날! 조금 멀어도 걸어가요~ 🚶' },
+        { icon: '🌤️', label: '대체로 맑음', temp: 23, tip: '기분 좋은 날씨에 맛있는 걸 먹어요!' },
+        { icon: '⛅', label: '구름 조금', temp: 21, tip: '적당히 시원해서 걸어가기 딱이에요' },
+        { icon: '🌥️', label: '흐림', temp: 19, tip: '흐린 날엔 따뜻한 국물이 최고! 🍲' },
+        { icon: '🌧️', label: '비', temp: 17, tip: '비 오는 날엔 가까운 곳이 최고예요! ☂️' },
+    ];
+    const tempVar = ((seed * 7) % 5) - 2;
+    const w = weathers[seed % weathers.length];
+    return { ...w, temp: w.temp + tempVar };
+}
+
 // ============================================
 // 2. STATE MANAGEMENT
 // ============================================
@@ -684,7 +724,7 @@ function createDayCell(dayNum, year, month, result, isOtherMonth) {
         cell.appendChild(nearbyEl);
 
         // Click to edit
-        cell.addEventListener('click', () => openEditModal(dateStr, amount));
+        cell.addEventListener('click', () => openRecommendModal(dateStr, amount));
     }
 
     return cell;
@@ -844,6 +884,124 @@ function resetEditAmount() {
 }
 
 // ============================================
+// 8.5 RECOMMENDATION MODAL
+// ============================================
+
+let recommendDateStr = null;
+let typingTimer = null;
+
+/** Open restaurant recommendation popup */
+function openRecommendModal(dateStr, amount) {
+    recommendDateStr = dateStr;
+
+    // Date display
+    $('recommendDate').textContent = '📅 ' + formatDateKo(dateStr);
+
+    // Weather
+    const weather = getSimulatedWeather(dateStr);
+    $('recommendWeather').textContent = `${weather.icon} ${weather.label} ${weather.temp}°C`;
+
+    // Character image based on budget level
+    const charImg = $('recommendCharImg');
+    if (amount >= 12000) charImg.src = 'assets/winter_excited.png';
+    else if (amount >= 10000) charImg.src = 'assets/winter_good.png';
+    else if (amount >= 9000) charImg.src = 'assets/winter_neutral.png';
+    else if (amount >= 8000) charImg.src = 'assets/winter_thinking.png';
+    else charImg.src = 'assets/winter_panic.png';
+
+    // Restaurant recommendation
+    const restaurant = getRestaurant(amount, dateStr);
+    const distance = RESTAURANT_DISTANCES[restaurant.defaultName] || '도보 5분';
+
+    // Price range text
+    const tier = getPriceTier(amount);
+    const priceRanges = {
+        under8000: '~8,000원',
+        under9000: '8,000~9,000원',
+        under10000: '9,000~10,000원',
+        under12000: '10,000~12,000원',
+        over12000: '12,000원~',
+    };
+
+    // Main card
+    $('recommendEmoji').textContent = restaurant.emoji;
+    $('recommendName').textContent = restaurant.defaultName;
+    $('recommendBudget').textContent = '💰 ' + priceRanges[tier];
+    $('recommendDistance').textContent = '🚶 ' + distance;
+    $('recommendReason').textContent = weather.tip;
+
+    // Alternative restaurants
+    const altList = $('recommendAltList');
+    altList.innerHTML = '';
+    const tierData = RESTAURANTS[tier];
+    tierData.nearby.forEach(name => {
+        const dist = RESTAURANT_DISTANCES[name] || '도보 5분';
+        const div = document.createElement('div');
+        div.className = 'recommend-alt-item';
+        div.innerHTML = `
+            <span class="recommend-alt-name">${name}</span>
+            <span class="recommend-alt-distance">🚶 ${dist}</span>
+        `;
+        altList.appendChild(div);
+    });
+
+    // Store amount for edit bridge
+    $('recommendOverlay').dataset.amount = amount;
+
+    // Reset animations & show modal
+    const overlay = $('recommendOverlay');
+    overlay.classList.remove('open');
+    $('recommendSpeechText').textContent = '';
+    $('recommendBubble').classList.remove('typing');
+    if (typingTimer) { clearTimeout(typingTimer); typingTimer = null; }
+
+    // Force reflow then open
+    void overlay.offsetWidth;
+    overlay.classList.add('open');
+
+    // Speech typing animation (delayed)
+    let speechMsg;
+    if (tier === 'over12000') {
+        speechMsg = `오늘은 예산이 넉넉해요! 먹고싶은 거 맘껏 드세요 🎉\n${weather.icon} ${weather.label}인 날, ${formatCurrency(amount)} 예산이면 프리패스!`;
+    } else if (tier === 'under12000') {
+        speechMsg = `오늘은 회사 근처 맛집 어때요? 😊\n${weather.icon} ${weather.label}인 날, ${formatCurrency(amount)} 예산이면 든든해요!`;
+    } else {
+        speechMsg = `오늘은 ${restaurant.defaultName} 어때요? 😊\n${weather.icon} ${weather.label}인 날, ${formatCurrency(amount)} 예산으로 딱이에요!`;
+    }
+    setTimeout(() => {
+        typeText('recommendSpeechText', speechMsg, 30);
+    }, 650);
+}
+
+/** Close recommendation popup */
+function closeRecommendModal() {
+    recommendDateStr = null;
+    if (typingTimer) { clearTimeout(typingTimer); typingTimer = null; }
+    $('recommendBubble').classList.remove('typing');
+    $('recommendOverlay').classList.remove('open');
+}
+
+/** Typing animation for speech bubble */
+function typeText(elementId, text, speed) {
+    const el = document.getElementById(elementId);
+    const bubble = el.closest('.recommend-speech-bubble');
+    el.textContent = '';
+    bubble.classList.add('typing');
+    let i = 0;
+
+    function type() {
+        if (i < text.length) {
+            el.textContent = text.substring(0, i + 1);
+            i++;
+            typingTimer = setTimeout(type, speed);
+        } else {
+            setTimeout(() => bubble.classList.remove('typing'), 600);
+        }
+    }
+    type();
+}
+
+// ============================================
 // 9. EVENT HANDLERS
 // ============================================
 
@@ -934,6 +1092,19 @@ function setupEventHandlers() {
         if (e.target === $('editModalOverlay')) closeEditModal();
     });
 
+    // Recommendation modal buttons
+    $('recommendCloseX').addEventListener('click', closeRecommendModal);
+    $('recommendCloseBtn').addEventListener('click', closeRecommendModal);
+    $('recommendOverlay').addEventListener('click', (e) => {
+        if (e.target === $('recommendOverlay')) closeRecommendModal();
+    });
+    $('recommendEditBtn').addEventListener('click', () => {
+        const dateStr = recommendDateStr;
+        const amount = parseInt($('recommendOverlay').dataset.amount) || 0;
+        closeRecommendModal();
+        setTimeout(() => openEditModal(dateStr, amount), 350);
+    });
+
     // Edit input - format with commas
     $('editAmountInput').addEventListener('input', (e) => {
         const raw = e.target.value.replace(/[^0-9]/g, '');
@@ -960,7 +1131,9 @@ function setupEventHandlers() {
     // Keyboard shortcut: Escape to close settings
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            if ($('editModalOverlay').classList.contains('open')) {
+            if ($('recommendOverlay').classList.contains('open')) {
+                closeRecommendModal();
+            } else if ($('editModalOverlay').classList.contains('open')) {
                 closeEditModal();
             } else if ($('settingsPanel').classList.contains('open')) {
                 toggleSettings();
