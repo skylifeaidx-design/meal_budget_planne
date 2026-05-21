@@ -1152,7 +1152,7 @@ function toggleSettings() {
 }
 
 // ============================================
-// 10. INITIALIZATION
+// 10. INITIALIZATION & EXTRA FEATURES
 // ============================================
 
 function init() {
@@ -1164,6 +1164,59 @@ function init() {
 
     setupEventHandlers();
     renderAll();
+    
+    // Video Intro Popup logic
+    showIntroVideo();
 }
 
-document.addEventListener('DOMContentLoaded', init);
+/** Show Intro Video only once per session */
+function showIntroVideo() {
+    const videoOverlay = document.getElementById('videoOverlay');
+    const introVideo = document.getElementById('introVideo');
+    const videoCloseBtn = document.getElementById('videoCloseBtn');
+    
+    if (!videoOverlay || !introVideo || !videoCloseBtn) return;
+
+    if (!sessionStorage.getItem('introVideoPlayed')) {
+        videoOverlay.classList.add('active');
+        
+        // Attempt autoplay
+        const playPromise = introVideo.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log("Autoplay prevented:", error);
+                // Autoplay was prevented. Fallback to muted autoplay or just let user use controls.
+                introVideo.muted = true;
+                introVideo.play().catch(e => console.log("Muted autoplay also prevented", e));
+            });
+        }
+        
+        sessionStorage.setItem('introVideoPlayed', 'true');
+    }
+
+    // Close logic
+    const closeIntro = () => {
+        videoOverlay.classList.remove('active');
+        introVideo.pause();
+    };
+
+    videoCloseBtn.addEventListener('click', closeIntro);
+    introVideo.addEventListener('ended', closeIntro);
+}
+
+/** Mouse Follower Logic */
+document.addEventListener('DOMContentLoaded', () => {
+    init();
+    
+    const mouseFollower = document.getElementById('mouseFollower');
+    if (mouseFollower) {
+        document.addEventListener('mousemove', (e) => {
+            if (mouseFollower.style.display !== 'block') {
+                mouseFollower.style.display = 'block';
+            }
+            // Center the follower on the cursor
+            mouseFollower.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+        });
+    }
+});
+
