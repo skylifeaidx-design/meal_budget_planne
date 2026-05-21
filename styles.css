@@ -1933,6 +1933,6 @@ body::before {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 15%; /* Focus on face */
-    transform: scale(1.3); /* Remove transparent border of the avatar */
+    object-position: 48% 28%; /* Focus on face and shoulders for the new photo */
+    transform: scale(2.2); /* Zoom in to frame face and shoulders */
 }
